@@ -6,7 +6,7 @@ namespace BachelorScore
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Trying my first GitHub repo change");
+            Console.WriteLine("Trying my first GitHub repo change #1");
         }
     }
 }
