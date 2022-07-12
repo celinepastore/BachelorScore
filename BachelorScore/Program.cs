@@ -17,11 +17,8 @@ namespace BachelorScore
             Console.WriteLine($"You can date someone as young as {Math.Round(young, 1)}.");
             Console.WriteLine($"But how old can you date??\nAs old as...{Math.Round(2.0 * (age - 7))}.");
             */
-            string smallTest = "DivideXXXXbyXXXXthisXXXX99.";
-            int firstOccurence = smallTest.IndexOf("X");
-            //Console.WriteLine(smallTest.Substring(firstOccurence, smallTest.Length));
             
-            TestScrape(1); // # of pages to scrape
+            TestScrape(5); // # of pages to scrape
         }
 
         static void TestScrape(int pMax)
@@ -61,6 +58,8 @@ namespace BachelorScore
                     string start = "inactive tile--person tile--landscape\" tabindex=\"0\" aria-label=";
                     string[,] players = new string[35, 5]; //??Need to declare empty array {}; how to do max or know how big to make?
                                                            //players[0] = messySplit[0];//??? why can't this be assigned?
+                    string[,] playersClean = new string[,] { }; //can I fill this with any number of string[]s?
+
                     int i = 0;
                     foreach (string person in messySplit)
                     {
@@ -88,15 +87,33 @@ namespace BachelorScore
                         
                         if (player != null)
                         {
-                            Console.WriteLine(player);
+                            //Console.WriteLine(player);
                             string split = "&lt;br /&gt; ";
                             if (player.IndexOf(split) != -1)
                             {
-                                player.Split(split);
-                                Console.WriteLine(player.Split(split)[0].Trim());
-                                //players[0, 1] = player.Split(split)[0].Trim();
-                                Console.WriteLine(player.Split(split)[1].Trim());
-                                Console.WriteLine(player.Split(split)[2].Trim());
+                                string s1;
+                                if ((player.Split(split)[0].Trim()).IndexOf(".") == -1)
+                                {
+                                    s1 = " ";
+                                }
+                                else
+                                {
+                                    s1 = ". ";
+                                }
+
+
+
+                                string line = (player.Split(split)[0].Trim()).Split(s1)[0]
+                                    + "," + (player.Split(split)[0].Trim()).Split(s1)[1]
+                                    + "," + player.Split(split)[1].Trim()
+                                    + ",'" + player.Split(split)[2].Trim() + "'";
+                                Console.WriteLine(line);
+                                // fixed StreamWriter to append by adding true as second argument
+                                using (StreamWriter writer = new StreamWriter("C:/Users/ceilp/OneDrive/Documents/Programming/contestants.txt", true))
+                                {
+                                    writer.WriteLine(line);
+                                }
+                               
                             }
 
                         }
