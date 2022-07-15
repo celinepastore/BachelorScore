@@ -2,6 +2,7 @@
 using System.Net;
 using System.IO;
 //using System.Windows.Forms;
+using Npgsql;
 
 
 namespace BachelorScore
@@ -17,8 +18,30 @@ namespace BachelorScore
             Console.WriteLine($"You can date someone as young as {Math.Round(young, 1)}.");
             Console.WriteLine($"But how old can you date??\nAs old as...{Math.Round(2.0 * (age - 7))}.");
             */
-            
-            TestScrape(5); // # of pages to scrape
+
+            //TestScrape(5); // # of pages to scrape
+            TestConnection();
+        }
+
+        private static NpgsqlConnection GetConnection(string password)
+        {
+            return new NpgsqlConnection($"Server=localhost;Port=5432;User ID=postgres;Password={password};Database=bachbase;");
+        }
+
+        private static void TestConnection()
+        {
+            Console.WriteLine("database password:");
+            string password = Console.ReadLine();
+
+            using (NpgsqlConnection con = GetConnection(password))
+            {
+                con.Open();
+                if (con.State == System.Data.ConnectionState.Open)
+                {
+                    Console.WriteLine("connection worked!");
+                }
+                else { Console.WriteLine("unable to connect"); }
+            }
         }
 
         static void TestScrape(int pMax)
@@ -91,6 +114,7 @@ namespace BachelorScore
                             string split = "&lt;br /&gt; ";
                             if (player.IndexOf(split) != -1)
                             {
+                                // pesky names with initials
                                 string s1;
                                 if ((player.Split(split)[0].Trim()).IndexOf(".") == -1)
                                 {
