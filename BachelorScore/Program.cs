@@ -31,7 +31,7 @@ namespace BachelorScore
 
     private static void SqlOverConnection()
         {
-            //https://www.npgsql.org/doc/basic-usage.html parameters
+            //https://www.npgsql.org/doc/basic-usage.html parameters  
             Console.WriteLine("database password:");
             string password = Console.ReadLine();
             NpgsqlConnection con = GetConnection(password);
