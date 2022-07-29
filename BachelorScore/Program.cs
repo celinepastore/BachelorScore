@@ -20,7 +20,8 @@ namespace BachelorScore
             */
 
             //TestScrape(5); // # of pages to scrape
-            TestConnection();
+            //TestConnection();
+            SqlOverConnection();
         }
 
         private static NpgsqlConnection GetConnection(string password)
@@ -28,7 +29,34 @@ namespace BachelorScore
             return new NpgsqlConnection($"Server=localhost;Port=5432;User ID=postgres;Password={password};Database=bachbase;");
         }
 
-        private static void TestConnection()
+    private static void SqlOverConnection()
+        {
+            //https://www.npgsql.org/doc/basic-usage.html parameters
+            Console.WriteLine("database password:");
+            string password = Console.ReadLine();
+            NpgsqlConnection con = GetConnection(password);
+            NpgsqlCommand cmd = new NpgsqlCommand();
+            cmd.CommandText = "INSERT INTO contestants (ID, Name) VALUES (0,'Celine')";
+            cmd.Connection = con;
+            con.Open();
+            try
+            {
+                int aff = cmd.ExecuteNonQuery();
+                Console.WriteLine(aff + " rows were affected.");
+            }
+            catch
+            {
+                //MessageBox.Show("Error encountered during INSERT operation.");
+                Console.WriteLine("failed attempted INSERT :(");
+            }
+            finally
+            {
+                con.Close();
+            }
+
+        }
+
+    private static void TestConnection()
         {
             Console.WriteLine("database password:");
             string password = Console.ReadLine();
@@ -39,6 +67,8 @@ namespace BachelorScore
                 if (con.State == System.Data.ConnectionState.Open)
                 {
                     Console.WriteLine("connection worked!");
+                    
+
                 }
                 else { Console.WriteLine("unable to connect"); }
             }
