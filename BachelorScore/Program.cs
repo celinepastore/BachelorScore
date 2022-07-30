@@ -20,7 +20,8 @@ namespace BachelorScore
             */
 
             //TestScrape(5); // # of pages to scrape
-            TestConnection();
+            //TestConnection();
+            SqlOverConnection();
         }
 
         private static NpgsqlConnection GetConnection(string password)
@@ -28,7 +29,62 @@ namespace BachelorScore
             return new NpgsqlConnection($"Server=localhost;Port=5432;User ID=postgres;Password={password};Database=bachbase;");
         }
 
-        private static void TestConnection()
+        private static void SqlOverConnection()
+        {
+            //https://www.npgsql.org/doc/basic-usage.html parameters  
+            Console.WriteLine("database password:");
+            string password = Console.ReadLine();
+            using NpgsqlConnection con = GetConnection(password);
+            NpgsqlCommand cmd = new NpgsqlCommand();
+            cmd.CommandText = "INSERT INTO contestants (ID, Name) VALUES (0, 'Celine')"; /*(0,'" + password + "')";*/
+            cmd.Connection = con;
+            con.Open();
+
+            var sql = "INSERT INTO contestants(ID, Name) VALUES(@name, @price)";
+            using (var cmd3 = new NpgsqlCommand(sql, con))
+            {
+
+                cmd3.Parameters.AddWithValue("name", "BMW");
+                cmd3.Parameters.AddWithValue("price", 36600);
+                cmd3.Prepare();
+                cmd3.ExecuteNonQuery();
+            }
+
+
+
+
+
+            /*
+            using var cmd2 = new NpgsqlCommand("INSERT INTO table (col1) VALUES (@p1), (@p2)", con)
+            {
+                Parameters =
+                {
+                    new("p1", "some_value"),
+                    new("p2", "some_other_value")
+                };
+            }
+            */
+
+
+
+            try
+                {
+                    int aff = cmd.ExecuteNonQuery();
+                    Console.WriteLine(aff + " rows were affected.");
+                }
+                catch
+                {
+                    //MessageBox.Show("Error encountered during INSERT operation.");
+                    Console.WriteLine("failed attempted INSERT :(");
+                }
+                finally
+                {
+                    con.Close();
+                }
+
+            }
+
+    private static void TestConnection()
         {
             Console.WriteLine("database password:");
             string password = Console.ReadLine();
@@ -39,6 +95,8 @@ namespace BachelorScore
                 if (con.State == System.Data.ConnectionState.Open)
                 {
                     Console.WriteLine("connection worked!");
+                    
+
                 }
                 else { Console.WriteLine("unable to connect"); }
             }
