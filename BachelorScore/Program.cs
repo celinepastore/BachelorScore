@@ -21,13 +21,39 @@ namespace BachelorScore
 
             //TestScrape(5); // # of pages to scrape
             //TestConnection();
-            SqlOverConnection();
+            //SqlOverConnection();
+            string[] person = new string[4] { "Celine", "35", "Madison, VA", "being awesome" };
+            InsertMyData("Tinygreen13", person);
         }
 
         private static NpgsqlConnection GetConnection(string password)
         {
             return new NpgsqlConnection($"Server=localhost;Port=5432;User ID=postgres;Password={password};Database=bachbase;");
         }
+
+        private static void InsertMyData(string password, string[] person)
+        {
+            using NpgsqlConnection con = GetConnection(password);
+            con.Open();
+            var sql = "INSERT INTO contestants(name, hometown, occupation) VALUES(@name, @hometown, @occupation)";
+            using (var cmd3 = new NpgsqlCommand(sql, con))
+            {
+                for (int i = 0; i < person.Length; i++)
+                {
+                    Console.WriteLine("i: " + i);
+                    Console.WriteLine(person[i]);
+                    cmd3.Parameters.AddWithValue("name", person[i]);
+                   // cmd3.Parameters.AddWithValue("age", Convert.ToInt32(person[i]));
+                    cmd3.Parameters.AddWithValue("hometown", person[i]);
+                    cmd3.Parameters.AddWithValue("occupation", person[i]);
+                    cmd3.Prepare();
+                    cmd3.ExecuteNonQuery();
+                }
+             
+            }
+            con.Close();
+        }
+
 
         private static void SqlOverConnection()
         {
@@ -36,11 +62,11 @@ namespace BachelorScore
             string password = Console.ReadLine();
             using NpgsqlConnection con = GetConnection(password);
             NpgsqlCommand cmd = new NpgsqlCommand();
-            cmd.CommandText = "INSERT INTO contestants (ID, Name) VALUES (0, 'Celine')"; /*(0,'" + password + "')";*/
+            cmd.CommandText = "INSERT INTO contestants (Name) VALUES ('Celine')"; /*(0,'" + password + "')";*/ //vulnerable to sql injection
             cmd.Connection = con;
             con.Open();
 
-            var sql = "INSERT INTO contestants(ID, Name) VALUES(@name, @price)";
+            var sql = "INSERT INTO contestants(Name, Occupation) VALUES(@name, @price)";
             using (var cmd3 = new NpgsqlCommand(sql, con))
             {
 
@@ -116,6 +142,8 @@ namespace BachelorScore
 
         static void ScrapePage(string url)
         {
+            Console.WriteLine("database password:");
+            string password = Console.ReadLine();
             string result = null;
             System.Net.WebResponse response = null;
             StreamReader reader = null;
