@@ -19,11 +19,11 @@ namespace BachelorScore
             Console.WriteLine($"But how old can you date??\nAs old as...{Math.Round(2.0 * (age - 7))}.");
             */
 
-            //TestScrape(5); // # of pages to scrape
+            TestScrape(5); // # of pages to scrape
             //TestConnection();
             //SqlOverConnection();
-            string[] person = new string[4] { "Celine", "35", "Madison, VA", "being awesome" };
-            InsertMyData("Tinygreen13", person);
+            //string[] person = new string[4] { "Paul Atreides", "15", "Caladan", "bloody messiah" };
+           // InsertMyData("theCakeIsALie", person);
         }
 
         private static NpgsqlConnection GetConnection(string password)
@@ -35,20 +35,16 @@ namespace BachelorScore
         {
             using NpgsqlConnection con = GetConnection(password);
             con.Open();
-            var sql = "INSERT INTO contestants(name, hometown, occupation) VALUES(@name, @hometown, @occupation)";
+            var sql = "INSERT INTO contestants(name, age, hometown, occupation) VALUES(@name, @age, @hometown, @occupation)";
             using (var cmd3 = new NpgsqlCommand(sql, con))
             {
-                for (int i = 0; i < person.Length; i++)
-                {
-                    Console.WriteLine("i: " + i);
-                    Console.WriteLine(person[i]);
-                    cmd3.Parameters.AddWithValue("name", person[i]);
-                   // cmd3.Parameters.AddWithValue("age", Convert.ToInt32(person[i]));
-                    cmd3.Parameters.AddWithValue("hometown", person[i]);
-                    cmd3.Parameters.AddWithValue("occupation", person[i]);
-                    cmd3.Prepare();
-                    cmd3.ExecuteNonQuery();
-                }
+                cmd3.Parameters.AddWithValue("name", person[0]);
+                cmd3.Parameters.AddWithValue("age", Convert.ToInt32(person[1]));
+                cmd3.Parameters.AddWithValue("hometown", person[2]);
+                cmd3.Parameters.AddWithValue("occupation", person[3]);
+                cmd3.Prepare();
+                cmd3.ExecuteNonQuery();
+                
              
             }
             con.Close();
@@ -142,8 +138,8 @@ namespace BachelorScore
 
         static void ScrapePage(string url)
         {
-            Console.WriteLine("database password:");
-            string password = Console.ReadLine();
+            //Console.WriteLine("database password:");
+            string password = "theCakeIsALie"; //Console.ReadLine();
             string result = null;
             System.Net.WebResponse response = null;
             StreamReader reader = null;
@@ -163,18 +159,20 @@ namespace BachelorScore
                 else
                 {
                     string[] messySplit = result.Split(secStart);
-                    string end = "style=\"animation-delay";
-                    string start = "inactive tile--person tile--landscape\" tabindex=\"0\" aria-label=";
+                    string start = "inactive tile--person tile--landscape";
+                    string end = "href=\"/shows";
                     string[,] players = new string[35, 5]; //??Need to declare empty array {}; how to do max or know how big to make?
                                                            //players[0] = messySplit[0];//??? why can't this be assigned?
                     string[,] playersClean = new string[,] { }; //can I fill this with any number of string[]s?
+
+                    
 
                     int i = 0;
                     foreach (string person in messySplit)
                     {
                         int s = person.IndexOf(start);
                         int e = person.IndexOf(end);
-
+                        //Console.WriteLine("s, e: " + s + ", " + e); // are the start and end keys working?
 
                         if (s != -1 && e != -1)
                         {
@@ -182,21 +180,22 @@ namespace BachelorScore
                             string[] splitPerson = personInfo.Split(";br /&gt");
                             //Console.WriteLine(splitPerson); //built in method for printing string array?
                             //Console.WriteLine(splitPerson[0]);
-                            players[i, 0] = person.Substring(s + start.Length + 1, e - (s + start.Length + 3)); 
+                            players[i, 0] = person.Substring(s + start.Length + 1, e - (s + start.Length + 3));
+                            Console.WriteLine(person.Substring(s + start.Length + 1, e - (s + start.Length + 3)));
                         }
                         i = i + 1;
                         
                     }
-                    //Console.WriteLine(players[0].Length);
+                    //Console.WriteLine(players[1,0]);
                     Console.WriteLine($"finished gathering data on {i} players.");
 
 
                     foreach (string player in players)
                     {
-                        
+                        //Console.WriteLine(player);
                         if (player != null)
                         {
-                            //Console.WriteLine(player);
+                           // Console.WriteLine(player);
                             string split = "&lt;br /&gt; ";
                             if (player.IndexOf(split) != -1)
                             {
@@ -211,18 +210,30 @@ namespace BachelorScore
                                     s1 = ". ";
                                 }
 
+                                Console.WriteLine("I am here");
+                                string[] person = new string[4];
+                                person[0] = (player.Split(split)[0].Trim()).Split(s1)[0];
+                                person[1] = (player.Split(split)[0].Trim()).Split(s1)[1];
+                                person[2] = player.Split(split)[1].Trim();
+                                person[3] = player.Split(split)[2].Trim();
+                                Array.ForEach(person, Console.WriteLine);
+                                InsertMyData(password, person);
+
+
 
 
                                 string line = (player.Split(split)[0].Trim()).Split(s1)[0]
                                     + "," + (player.Split(split)[0].Trim()).Split(s1)[1]
                                     + "," + player.Split(split)[1].Trim()
                                     + ",'" + player.Split(split)[2].Trim() + "'";
-                                Console.WriteLine(line);
+                                //Console.WriteLine(line);
                                 // fixed StreamWriter to append by adding true as second argument
                                 using (StreamWriter writer = new StreamWriter("C:/Users/ceilp/OneDrive/Documents/Programming/contestants.txt", true))
                                 {
                                     writer.WriteLine(line);
                                 }
+
+                                
                                
                             }
 
