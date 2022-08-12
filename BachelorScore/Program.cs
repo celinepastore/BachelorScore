@@ -19,7 +19,7 @@ namespace BachelorScore
             Console.WriteLine($"But how old can you date??\nAs old as...{Math.Round(2.0 * (age - 7))}.");
             */
 
-            TestScrape(5); // # of pages to scrape
+            //TestScrape(5); // # of pages to scrape
             //TestConnection();
             //SqlOverConnection();
             //string[] person = new string[4] { "Celine", "35", "Madison, VA", "being awesome" };
@@ -41,8 +41,8 @@ namespace BachelorScore
             {
                 cmd3.Parameters.AddWithValue("name", person[0]);
                 cmd3.Parameters.AddWithValue("age", Convert.ToInt32(person[1]));
-                cmd3.Parameters.AddWithValue("hometown", person[2]);
-                cmd3.Parameters.AddWithValue("occupation", person[3]);
+                cmd3.Parameters.AddWithValue("hometown", person[3]);
+                cmd3.Parameters.AddWithValue("occupation", person[2]);
                 cmd3.Prepare();
                 cmd3.ExecuteNonQuery();
                 
