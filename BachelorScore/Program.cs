@@ -22,8 +22,9 @@ namespace BachelorScore
             TestScrape(5); // # of pages to scrape
             //TestConnection();
             //SqlOverConnection();
+            //string[] person = new string[4] { "Celine", "35", "Madison, VA", "being awesome" };
             //string[] person = new string[4] { "Paul Atreides", "15", "Caladan", "bloody messiah" };
-           // InsertMyData("theCakeIsALie", person);
+            //InsertMyData("theCakeIsALie", person);
         }
 
         private static NpgsqlConnection GetConnection(string password)
@@ -159,8 +160,8 @@ namespace BachelorScore
                 else
                 {
                     string[] messySplit = result.Split(secStart);
-                    string start = "inactive tile--person tile--landscape";
-                    string end = "href=\"/shows";
+                    string start = "data-track-cta_text";
+                    string end = "data-track-link_name_custom";
                     string[,] players = new string[35, 5]; //??Need to declare empty array {}; how to do max or know how big to make?
                                                            //players[0] = messySplit[0];//??? why can't this be assigned?
                     string[,] playersClean = new string[,] { }; //can I fill this with any number of string[]s?
@@ -170,7 +171,7 @@ namespace BachelorScore
                     int i = 0;
                     foreach (string person in messySplit)
                     {
-                        int s = person.IndexOf(start);
+                        int s = person.IndexOf(start) + 1;
                         int e = person.IndexOf(end);
                         //Console.WriteLine("s, e: " + s + ", " + e); // are the start and end keys working?
 
@@ -181,7 +182,7 @@ namespace BachelorScore
                             //Console.WriteLine(splitPerson); //built in method for printing string array?
                             //Console.WriteLine(splitPerson[0]);
                             players[i, 0] = person.Substring(s + start.Length + 1, e - (s + start.Length + 3));
-                            Console.WriteLine(person.Substring(s + start.Length + 1, e - (s + start.Length + 3)));
+                            //Console.WriteLine(person.Substring(s + start.Length + 1, e - (s + start.Length + 3)));
                         }
                         i = i + 1;
                         
@@ -210,13 +211,15 @@ namespace BachelorScore
                                     s1 = ". ";
                                 }
 
-                                Console.WriteLine("I am here");
+                               
                                 string[] person = new string[4];
                                 person[0] = (player.Split(split)[0].Trim()).Split(s1)[0];
                                 person[1] = (player.Split(split)[0].Trim()).Split(s1)[1];
                                 person[2] = player.Split(split)[1].Trim();
                                 person[3] = player.Split(split)[2].Trim();
-                                Array.ForEach(person, Console.WriteLine);
+                               
+                                //Array.ForEach(person, Console.WriteLine);
+                                
                                 InsertMyData(password, person);
 
 
@@ -227,10 +230,11 @@ namespace BachelorScore
                                     + "," + player.Split(split)[1].Trim()
                                     + ",'" + player.Split(split)[2].Trim() + "'";
                                 //Console.WriteLine(line);
+
                                 // fixed StreamWriter to append by adding true as second argument
                                 using (StreamWriter writer = new StreamWriter("C:/Users/ceilp/OneDrive/Documents/Programming/contestants.txt", true))
                                 {
-                                    writer.WriteLine(line);
+                                    //writer.WriteLine(line);
                                 }
 
                                 
