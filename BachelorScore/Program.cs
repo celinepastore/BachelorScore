@@ -240,7 +240,7 @@ namespace BachelorScore
                                 person[0] = nameAge.Substring(0, ageStart - 1);
                                 person[1] = nameAge.Substring(ageStart);
                                 person[2] = player.Split(split)[1].Trim();
-                                person[3] = player.Split(split)[2].Trim();
+                                person[3] = player.Split(split)[2].Trim(); 
                                
                                 //Array.ForEach(person, Console.WriteLine);
                                 
