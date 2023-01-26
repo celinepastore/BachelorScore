@@ -189,7 +189,7 @@ namespace BachelorScore
                         //Console.WriteLine("i:" + i + " ****** " + person);
                         int s = person.IndexOf(start) + 1;
                         int e = person.IndexOf(end);
-                        Console.WriteLine("i: " + i + "; s, e: " + s + ", " + e); // are the start and end keys working?
+                        //Console.WriteLine("i: " + i + "; s, e: " + s + ", " + e); // are the start and end keys working?
 
                         if (s != -1 && e != -1)
                         {
@@ -213,13 +213,14 @@ namespace BachelorScore
                         //Console.WriteLine(player);
                         if (player != null)
                         {
-                            Console.WriteLine(player);
+                            //Console.WriteLine(player);
                             string split = "&lt;br /&gt; ";
                             if (player.IndexOf(split) != -1)
                             {
                                 //Console.WriteLine("In split!");
                                 // pesky names with initials
                                 
+                                /*
                                 string s1;
                                 if ((player.Split(split)[0].Trim()).IndexOf(".") == -1)
                                 {
@@ -229,7 +230,7 @@ namespace BachelorScore
                                 {
                                     s1 = ". ";
                                 }
-                                
+                                */
 
                                 int ageStart = (player.Split(split)[0].Trim()).IndexOfAny("0123456789".ToCharArray());
                                 string nameAge = (player.Split(split)[0].Trim());
@@ -237,28 +238,29 @@ namespace BachelorScore
                                 string[] person = new string[4];
                                 //person[0] = (player.Split(split)[0].Trim()).Split(s1)[0];
                                 //person[1] = (player.Split(split)[0].Trim()).Split(s1)[1];
-                                person[0] = nameAge.Substring(0, ageStart - 1);
-                                person[1] = nameAge.Substring(ageStart);
+                                person[0] = nameAge.Substring(0, ageStart - 1).Trim();
+                                person[1] = nameAge.Substring(ageStart).Trim();
                                 person[2] = player.Split(split)[1].Trim();
                                 person[3] = player.Split(split)[2].Trim(); 
                                
                                 //Array.ForEach(person, Console.WriteLine);
                                 
-                                InsertMyData(password, person);
+                               InsertMyData(password, person);
 
 
 
 
-                                string line = nameAge.Substring(0, ageStart - 1)
-                                    + "," + nameAge.Substring(ageStart)
+                                string line = nameAge.Substring(0, ageStart - 1).Trim()
+                                    + "," + nameAge.Substring(ageStart).Trim()
                                     + "," + player.Split(split)[1].Trim()
                                     + ",'" + player.Split(split)[2].Trim() + "'";
-                                Console.WriteLine(line);
+                               
+                                //Console.WriteLine(line);
 
                                 // fixed StreamWriter to append by adding true as second argument
                                 using (StreamWriter writer = new StreamWriter("C:/Users/ceilp/OneDrive/Documents/Programming/contestants_2023.txt", true))
                                 {
-                                    writer.WriteLine(line);
+                                   // writer.WriteLine(line);
                                 }
 
                                 
