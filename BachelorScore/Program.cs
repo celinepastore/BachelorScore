@@ -144,10 +144,14 @@ namespace BachelorScore
         {
             Console.WriteLine($"scrape up to {pMax} pages looking for contestants");
 
-            string url = "https://abc.com/shows/the-bachelor/cast?page="; // https://abc.com/shows/the-bachelorette/cast?page=";
+            string url = "https://abc.com/shows/the-bachelor/cast?page=";
+                //"https://abc.com/shows/the-bachelorette/cast?page=";
+            //"https://abc.com/shows/the-bachelor/cast?page="; 
+            // https://abc.com/shows/the-bachelorette/cast?page=";
             for (int p = 1; p < pMax + 1; p++)
             {
-                string pageUrl = url + p + "#";
+                string pageUrl = url + p;// + "#";
+                Console.WriteLine(pageUrl);
                 ScrapePage(pageUrl);
             }
         }
@@ -166,7 +170,7 @@ namespace BachelorScore
                 response = request.GetResponse();
                 reader = new StreamReader(response.GetResponseStream(), System.Text.Encoding.UTF8);
                 result = reader.ReadToEnd();
-                string secStart = "AnchorLink tile tile--hero";
+                string secStart = "{\"type\":\"person\""; //"AnchorLink tile tile--hero";
                 // problem: when page does not have contestants abc.com still sends response
                 if (result.IndexOf(secStart) == -1)
                 {
@@ -175,8 +179,8 @@ namespace BachelorScore
                 else
                 {
                     string[] messySplit = result.Split(secStart);
-                    string start = "data-track-cta_text";
-                    string end = "data-track-link_name_custom";
+                    string start = "\"title\"";// "data -track-cta_text";
+                    string end = "urlName\":"; // "data -track-link_name_custom";
                     string[,] players = new string[100, 5]; //??Need to declare empty array {}; how to do max or know how big to make?
                                                            //players[0] = messySplit[0];//??? why can't this be assigned?
                     string[,] playersClean = new string[,] { }; //can I fill this with any number of string[]s?
@@ -199,70 +203,78 @@ namespace BachelorScore
                             //Console.WriteLine(splitPerson); //built in method for printing string array?
                             //Console.WriteLine(splitPerson[0] + "\n" + splitPerson[1]);
                             players[i, 0] = person.Substring(s + start.Length + 1, e - (s + start.Length + 3));
-                            //Console.WriteLine(person.Substring(s + start.Length + 1, e - (s + start.Length + 3)));
+                            //Console.WriteLine("i: " + i + " ****PERSON CHUNK****" + person.Substring(s + start.Length + 1, e - (s + start.Length + 3)));
+                            i = i + 1;
                         }
-                        i = i + 1;
+                        
                         
                     }
                     //Console.WriteLine(players[1,0]);
-                    Console.WriteLine($"finished gathering data on {i} players.");
+                    Console.WriteLine($"Found {i} players on page {url}.");
 
 
                     foreach (string player in players)
                     {
                         //Console.WriteLine(player);
+                        
                         if (player != null)
                         {
-                            //Console.WriteLine(player);
-                            string split = "&lt;br /&gt; ";
-                            if (player.IndexOf(split) != -1)
+                            Console.WriteLine(player);
+                            if (1 == 1)
                             {
-                                //Console.WriteLine("In split!");
-                                // pesky names with initials
-                                
-                                /*
-                                string s1;
-                                if ((player.Split(split)[0].Trim()).IndexOf(".") == -1)
+
+
+                            }
+                            else { // prior to 2024
+                                string split = "&lt;br /&gt; ";
+                                if (player.IndexOf(split) != -1)
                                 {
-                                    s1 = " ";
+                                    //Console.WriteLine("In split!");
+                                    // pesky names with initials
+
+                                    /*
+                                    string s1;
+                                    if ((player.Split(split)[0].Trim()).IndexOf(".") == -1)
+                                    {
+                                        s1 = " ";
+                                    }
+                                    else
+                                    {
+                                        s1 = ". ";
+                                    }
+                                    */
+
+                                    int ageStart = (player.Split(split)[0].Trim()).IndexOfAny("0123456789".ToCharArray());
+                                    string nameAge = (player.Split(split)[0].Trim());
+
+                                    string[] person = new string[4];
+                                    //person[0] = (player.Split(split)[0].Trim()).Split(s1)[0];
+                                    //person[1] = (player.Split(split)[0].Trim()).Split(s1)[1];
+                                    person[0] = nameAge.Substring(0, ageStart - 1).Trim();
+                                    person[1] = nameAge.Substring(ageStart).Trim();
+                                    person[2] = player.Split(split)[1].Trim();
+                                    person[3] = player.Split(split)[2].Trim();
+
+                                    //Array.ForEach(person, Console.WriteLine);
+
+                                    //InsertMyData(password, person);
+
+
+
+
+                                    string line = nameAge.Substring(0, ageStart - 1).Trim()
+                                        + "," + nameAge.Substring(ageStart).Trim()
+                                        + "," + player.Split(split)[1].Trim()
+                                        + ",'" + player.Split(split)[2].Trim() + "'";
+
+                                    //Console.WriteLine(line);
+
+                                    // fixed StreamWriter to append by adding true as second argument
+                                    using (StreamWriter writer = new StreamWriter("C:/Users/ceilp/OneDrive/Documents/Programming/contestants_2024.txt", true))
+                                    {
+                                        writer.WriteLine(line);
+                                    }
                                 }
-                                else
-                                {
-                                    s1 = ". ";
-                                }
-                                */
-
-                                int ageStart = (player.Split(split)[0].Trim()).IndexOfAny("0123456789".ToCharArray());
-                                string nameAge = (player.Split(split)[0].Trim());
-
-                                string[] person = new string[4];
-                                //person[0] = (player.Split(split)[0].Trim()).Split(s1)[0];
-                                //person[1] = (player.Split(split)[0].Trim()).Split(s1)[1];
-                                person[0] = nameAge.Substring(0, ageStart - 1).Trim();
-                                person[1] = nameAge.Substring(ageStart).Trim();
-                                person[2] = player.Split(split)[1].Trim();
-                                person[3] = player.Split(split)[2].Trim(); 
-                               
-                                //Array.ForEach(person, Console.WriteLine);
-                                
-                               InsertMyData(password, person);
-
-
-
-
-                                string line = nameAge.Substring(0, ageStart - 1).Trim()
-                                    + "," + nameAge.Substring(ageStart).Trim()
-                                    + "," + player.Split(split)[1].Trim()
-                                    + ",'" + player.Split(split)[2].Trim() + "'";
-                               
-                                //Console.WriteLine(line);
-
-                                // fixed StreamWriter to append by adding true as second argument
-                                using (StreamWriter writer = new StreamWriter("C:/Users/ceilp/OneDrive/Documents/Programming/contestants_2023.txt", true))
-                                {
-                                   // writer.WriteLine(line);
-                                }
-
                                 
                                
                             }
