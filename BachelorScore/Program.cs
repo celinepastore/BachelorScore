@@ -3,7 +3,7 @@ using System.Net;
 using System.IO;
 //using System.Windows.Forms;
 using Npgsql;
-
+using Newtonsoft.Json.Linq;
 
 namespace BachelorScore
 {
@@ -170,7 +170,7 @@ namespace BachelorScore
                 response = request.GetResponse();
                 reader = new StreamReader(response.GetResponseStream(), System.Text.Encoding.UTF8);
                 result = reader.ReadToEnd();
-                string secStart = "{\"type\":\"person\""; //"AnchorLink tile tile--hero";
+                string secStart = "{\"type\":\"person\",\"id\":"; //"AnchorLink tile tile--hero";
                 // problem: when page does not have contestants abc.com still sends response
                 if (result.IndexOf(secStart) == -1)
                 {
@@ -199,10 +199,16 @@ namespace BachelorScore
                         {
                             string personInfo = person.Substring(s + start.Length, e - (s + start.Length));
                             //Console.WriteLine("i: " +i + " *** " + personInfo);
+                            string new_start = ",\"person\":";
+                            int new_s = person.IndexOf(new_start);
+                            int new_e = person.IndexOf("}");
+                            string personTrimmed = person.Substring(new_s + new_start.Length, new_e - new_s - new_start.Length + 1);
+                            //Console.WriteLine("i: " + i + " $$$ " + personTrimmed);
                             string[] splitPerson = personInfo.Split(";br /&gt");
                             //Console.WriteLine(splitPerson); //built in method for printing string array?
                             //Console.WriteLine(splitPerson[0] + "\n" + splitPerson[1]);
-                            players[i, 0] = person.Substring(s + start.Length + 1, e - (s + start.Length + 3));
+                            //players[i, 0] = person.Substring(s + start.Length + 1, e - (s + start.Length + 3));
+                            players[i, 0] = personTrimmed;
                             //Console.WriteLine("i: " + i + " ****PERSON CHUNK****" + person.Substring(s + start.Length + 1, e - (s + start.Length + 3)));
                             i = i + 1;
                         }
@@ -215,13 +221,37 @@ namespace BachelorScore
 
                     foreach (string player in players)
                     {
-                        //Console.WriteLine(player);
+                        //Console.WriteLine("HERE", player);
                         
                         if (player != null)
                         {
-                            Console.WriteLine(player);
+                            //Console.WriteLine(player);
+
+                            
+
                             if (1 == 1)
                             {
+                                string[] person = new string[10];
+                                JObject p = JObject.Parse(player);
+                                Console.WriteLine(p);
+                                //string[] p = Newtonsoft.Json.JsonConvert.DeserializeObject<string[]>(player);
+
+                                string[] descr = p["description"].ToString().Split("<br />"); 
+
+                                person[0] = p["type"].ToString();
+                                person[1] = p["firstname"].ToString();
+                                var lastname = p.SelectToken("lastname");
+                                if (lastname != null)
+                                {
+                                    person[2] = p["lastname"].ToString(); // need to test for existence of last name
+                                }
+                                person[3] = p["bio"].ToString();
+                                person[4] = descr[0].Trim(); // age
+                                person[5] = descr[1].Trim(); // occupation
+                                person[6] = descr[2].Trim(); // hometown
+                                
+
+
 
 
                             }
